@@ -55,13 +55,13 @@ namespace Makist.IO
 					_server = new TcpListener(IPAddress.Any, port);
 					_server.Start();
 					_server.BeginAcceptTcpClient(new AsyncCallback(AcceptTcpClientCallback), _server);
-                    Debug.LogError("Server Open");
+             //       Debug.LogError("Server Open");
                     OnOpen.Invoke();
                 }
                 catch(Exception e)
                 {
-                    Debug.LogError("Server Open Failed");
-                    Debug.LogError(e);
+             //       Debug.LogError("Server Open Failed");
+             //       Debug.LogError(e);
                     _server.Stop();
                     _server = null;
                     OnOpenFailed.Invoke();
@@ -75,13 +75,13 @@ namespace Makist.IO
                 try
                 {
 					_client = new TcpClient();
-                    Debug.LogError("Client Begin Connect");
+              //      Debug.LogError("Client Begin Connect");
 					_client.BeginConnect(IPAddress.Parse(ipAddress), port, new AsyncCallback(ConnectCallback), _client);
                 }
                 catch(Exception e)
                 {
-                    Debug.LogError("Client Begin Connect Failed");
-                    Debug.LogError(e);
+             //       Debug.LogError("Client Begin Connect Failed");
+             //       Debug.LogError(e);
 					_client.Close();
 					_client = null;
                     OnOpenFailed.Invoke();
@@ -104,7 +104,7 @@ namespace Makist.IO
                     _client = null;
                 }
                 _server = null;
-                Debug.LogError("Server Close");
+            //    Debug.LogError("Server Close");
             }
             else
             {
@@ -114,7 +114,7 @@ namespace Makist.IO
                 _client.Client.Disconnect(false);
                 _client.Close();
                 _client = null;
-                Debug.LogError("Client Close");
+            //    Debug.LogError("Client Close");
             }
 
             _readBuffer.Clear();
@@ -123,7 +123,7 @@ namespace Makist.IO
 
         protected override void ErrorClose()
         {
-            Debug.LogError("Error Close");
+        //    Debug.LogError("Error Close");
             OnErrorClosed.Invoke();
             Close();
         }
@@ -176,8 +176,8 @@ namespace Makist.IO
             }
             catch(Exception e)
             {
-                Debug.LogError("Write Error");
-                Debug.LogError(e);
+           //     Debug.LogError("Write Error");
+           //     Debug.LogError(e);
                 ErrorClose();
             }
         }
@@ -202,13 +202,13 @@ namespace Makist.IO
             {
 				_client = _server.EndAcceptTcpClient(result);
                 _client.GetStream().BeginRead(_buffer, 0, _buffer.Length, new AsyncCallback(ReadCallback), _buffer);
-				Debug.LogError("Client Connected");
+			//	Debug.LogError("Client Connected");
 				OnClientConnected.Invoke();
             }
             catch(Exception e)
             {
-                Debug.LogError("AcceptCallback Error");
-                Debug.LogError(e);
+            //    Debug.LogError("AcceptCallback Error");
+            //    Debug.LogError(e);
             }
         }
 
@@ -218,13 +218,13 @@ namespace Makist.IO
             {
                 _client.EndConnect(result);
                 _client.GetStream().BeginRead(_buffer, 0, _buffer.Length, new AsyncCallback(ReadCallback), _buffer);
-                Debug.LogError("Client Open");
+           //     Debug.LogError("Client Open");
                 OnOpen.Invoke();
             }
             catch(Exception e)
             {
-                Debug.LogError("ConnectCallback Error");
-                Debug.LogError(e);
+           //     Debug.LogError("ConnectCallback Error");
+           //     Debug.LogError(e);
 				_client.Close();
 				_client = null;
                 OnOpenFailed.Invoke();
@@ -235,6 +235,9 @@ namespace Makist.IO
         {
             if (_client == null)
                 return;
+
+            if (!_client.Connected)
+                return;
             
             int readSize = 0;
             try
@@ -243,8 +246,8 @@ namespace Makist.IO
             }
             catch(Exception e)
             {
-                Debug.LogError("ReadCallback Exception");
-                Debug.LogError(e);
+           //     Debug.LogError("ReadCallback Exception");
+           //     Debug.LogError(e);
                 ErrorClose();
                 return;
             }
@@ -253,7 +256,7 @@ namespace Makist.IO
             {
                 if(server)
                 {
-                    Debug.LogError("Client disconnected");
+            //        Debug.LogError("Client disconnected");
 					_client.Client.Disconnect(false);
 					_client.Close();
 					_client = null;
@@ -286,8 +289,8 @@ namespace Makist.IO
             }
             catch(Exception e)
             {
-                Debug.LogError("WriteCallback Error");
-                Debug.LogError(e);
+            //    Debug.LogError("WriteCallback Error");
+            //    Debug.LogError(e);
                 ErrorClose();
             }
         }
